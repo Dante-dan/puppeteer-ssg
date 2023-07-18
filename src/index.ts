@@ -18,7 +18,7 @@ if (existsSync(PAGE_PATH)) {
 }
 mkdirSync(PAGE_PATH, { recursive: true });
 
-async function setup({ url, concurrentNumber = 5, blockList, allowStylesheetHost }: setupOptions, cb: (param: { path: string } & ssrResult) => {}) {
+export async function setup({ url, concurrentNumber = 5, blockList, allowStylesheetHost }: setupOptions, cb: (param: { path: string } & ssrResult) => {}) {
   const browser = await puppeteer.launch();
   const ssrAll = url.map((str) => ssr({ url: str, browser, blockList, allowStylesheetHost }));
   const result = await runConcurrentTasks(ssrAll, concurrentNumber);
