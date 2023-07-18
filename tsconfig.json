@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "esModuleInterop": true,
     "target": "ESNext",
     "module": "ESNext",
     "moduleResolution": "node",
@@ -10,6 +11,11 @@
     "declaration": true,
     "declarationMap": true
   },
+  "ts-node": {
+    "esm": true,
+    "experimentalSpecifierResolution": "node"
+  },
+  "include": ["/**/*.ts"],
   "exclude": [
     "node_modules",
     "dist"

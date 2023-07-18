@@ -2,34 +2,49 @@ import puppeteer from 'puppeteer';
 import { ssr } from './server-side-render';
 import { runConcurrentTasks } from './run-concurrent-task';
 import type { ssrResult, ssrOptions } from './server-side-render';
-import { existsSync, mkdirSync, rmdirSync, writeFileSync } from 'fs';
+import { existsSync, mkdirSync, rmSync, writeFileSync } from 'fs';
 import { join } from 'path';
 
 export type { ssrResult, ssrOptions };
 export type setupOptions = {
   url: string[];
-  concurrentNumber: number;
+  concurrentNumber?: number;
 } & ssrOptions;
+
+export type setupResult = ({ path: string } & ssrResult)[];
+
+export const DEFAULT_ALLOW_REQUEST_TYPE = ['document', 'script', 'xhr', 'fetch', 'stylesheet', 'other'];
+export const DEFAULT_BLOCK_LIST = [/analytics\.js/, /google-analytics/, /clarity/, /cloudflareinsights/];
 
 const DIST_PATH = join(process.cwd(), 'dist', 'ssr');
 const PAGE_PATH = join(DIST_PATH, 'page');
 if (existsSync(PAGE_PATH)) {
-  rmdirSync(PAGE_PATH, { recursive: true });
+  rmSync(PAGE_PATH, { recursive: true });
 }
 mkdirSync(PAGE_PATH, { recursive: true });
 
-export async function setup({ url, concurrentNumber = 5, blockList, allowStylesheetHost }: setupOptions, cb: (param: { path: string } & ssrResult) => {}) {
-  const browser = await puppeteer.launch();
-  const ssrAll = url.map((str) => ssr({ url: str, browser, blockList, allowStylesheetHost }));
+export async function setup({
+  url,
+  concurrentNumber,
+  blockList = DEFAULT_BLOCK_LIST,
+  allowStylesheetHost,
+  waitForSelector,
+  waitForTimeout,
+  allowRequestType = DEFAULT_ALLOW_REQUEST_TYPE,
+}: setupOptions): Promise<setupResult> {
+  const browser = await puppeteer.launch({ headless: 'new' });
+  const ssrAll = url.map((str) => () => ssr({ url: str, browser, blockList, allowStylesheetHost, waitForSelector, waitForTimeout, allowRequestType }));
   const result = await runConcurrentTasks(ssrAll, concurrentNumber);
-  result.forEach((ssrResult) => {
+  const results = result.map((ssrResult) => {
     const { url, html, ttRenderMs } = ssrResult;
     const urlObj = new URL(url);
     const path = join(PAGE_PATH, urlObj.host, urlObj.pathname);
     mkdirSync(path, { recursive: true });
-    const filePath = join(path, 'index.html' + urlObj.search);
+    urlObj.searchParams.delete('headless');
+    const filePath = join(path, 'index' + urlObj.search + '.html');
     writeFileSync(filePath, html);
-    cb({ path: filePath, ...ssrResult });
+    return { path: filePath, ...ssrResult };
   });
   await browser.close();
+  return results;
 }

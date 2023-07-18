@@ -4,7 +4,7 @@
  * @param concurrentNumber
  * @returns {Promise<unknown>}
  */
-export function runConcurrentTasks<T>(concurrentTasks: Promise<T>[], concurrentNumber: number): Promise<T[]> {
+export function runConcurrentTasks<T>(concurrentTasks: (() => Promise<T>)[], concurrentNumber: number): Promise<T[]> {
   console.info(`共有 ${concurrentTasks.length} 个任务，最大并发数为 ${concurrentNumber}`);
   return new Promise((resolve, reject) => {
     let index = 0;
