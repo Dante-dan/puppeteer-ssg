@@ -1,0 +1,28 @@
+{
+  "name": "puppeteer-ssg",
+  "version": "1.0.3",
+  "description": "ssg by puppeteer",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 0",
+    "build": "tsc",
+    "prepublish": "rm -rf dist && pnpm run build"
+  },
+  "keywords": ["ssg", "pre-render", "puppeteer", "static site generator"],
+  "author": "",
+  "license": "CC BY-NC-SA 4.0",
+  "volta": {
+    "node": "18.16.1",
+    "pnpm": "8.6.7"
+  },
+  "dependencies": {
+    "puppeteer": "^20.8.2",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.1.6"
+  },
+  "devDependencies": {
+    "prettier": "^3.0.0"
+  }
+}
