@@ -5,6 +5,10 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:Dante-dan/puppeteer-ssg.git"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 0",
     "build": "tsc",
