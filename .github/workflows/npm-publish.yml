@@ -21,9 +21,8 @@ jobs:
         name: Install pnpm
         id: pnpm-install
         with:
-          version: 18
+          version: 8
           run_install: true
-      - run: pnpm install 
       - run: pnpm build
 
   publish-npm:
@@ -36,7 +35,14 @@ jobs:
         with:
           node-version: 18
           registry-url: https://registry.npmjs.org/
-      - run: pnpm install
+      - name: Set pnpm settings
+        run: echo "npm_config_auto_install_peers=true" >> $GITHUB_ENV
+      - uses: pnpm/action-setup@v2
+        name: Install pnpm
+        id: pnpm-install
+        with:
+          version: 8
+          run_install: true
       - run: pnpm publish
         env:
           NODE_AUTH_TOKEN: ${{secrets.npm_token}}
