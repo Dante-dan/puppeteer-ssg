@@ -18,8 +18,12 @@
   "author": "",
   "license": "CC BY-NC-SA 4.0",
   "volta": {
+    "node": "18.16.1",
+    "pnpm": "8.6.7"
+  },
+  "engines": {
     "node": "^18.16.1",
-    "pnpm": "^8.6.7"
+    "pnpm": "^7.33.3"
   },
   "dependencies": {
     "puppeteer": "^20.8.2",
