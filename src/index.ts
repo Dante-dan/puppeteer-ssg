@@ -32,7 +32,7 @@ export async function setup({
   waitForTimeout,
   allowRequestType = DEFAULT_ALLOW_REQUEST_TYPE,
 }: setupOptions): Promise<setupResult> {
-  const browser = await puppeteer.launch({ headless: 'new' });
+  const browser = await puppeteer.launch({ args: ['--disable-web-security'], ignoreHTTPSErrors: true, headless: 'new' });
   const ssrAll = url.map((str) => () => ssr({ url: str, browser, blockList, allowStylesheetHost, waitForSelector, waitForTimeout, allowRequestType }));
   const result = await runConcurrentTasks(ssrAll, concurrentNumber);
   const results = result.map((ssrResult) => {

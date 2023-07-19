@@ -69,11 +69,15 @@ export async function ssr({
       const isStylesheet = resourceType === 'stylesheet';
       if (isStylesheet) {
         // 处理样式表
-        if (allowStylesheetHost.length === 0) {
-          // 如果没有设置允许的样式表域名，则缓存所有样式表
-          stylesheetContents[responseUrl] = await resp.text();
-        } else if (allowStylesheetHost.includes(new URL(responseUrl).host)) {
-          stylesheetContents[responseUrl] = await resp.text();
+        try {
+          if (allowStylesheetHost.length === 0) {
+            // 如果没有设置允许的样式表域名，则缓存所有样式表
+            stylesheetContents[responseUrl] = await resp?.text();
+          } else if (allowStylesheetHost.includes(new URL(responseUrl).host)) {
+            stylesheetContents[responseUrl] = await resp?.text();
+          }
+        } catch (_) {
+          // ProtocolError 存入缓存并非必要操作, 忽略错误
         }
       }
       if (
