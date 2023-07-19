@@ -14,6 +14,8 @@ export type ssrOptions = {
   waitForSelector?: string;
   waitForTimeout?: number;
   allowRequestType?: string[];
+  // 是否将 css 合并到 html 中
+  concatStylesheetToHtml?: boolean;
 };
 
 export async function ssr({
@@ -23,6 +25,7 @@ export async function ssr({
   allowStylesheetHost = [],
   waitForSelector: selector,
   waitForTimeout: timeout,
+  concatStylesheetToHtml = true,
   allowRequestType,
 }: {
   url: string;
@@ -67,7 +70,7 @@ export async function ssr({
       const responseUrl = resp.url();
       const resourceType = resp.request().resourceType();
       const isStylesheet = resourceType === 'stylesheet';
-      if (isStylesheet) {
+      if (concatStylesheetToHtml && isStylesheet) {
         // 处理样式表
         try {
           if (allowStylesheetHost.length === 0) {
