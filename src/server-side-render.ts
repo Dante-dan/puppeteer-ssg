@@ -65,7 +65,8 @@ export async function ssr({
     // 1. Stash the responses of local stylesheets.
     page.on('response', async (resp) => {
       const responseUrl = resp.url();
-      const isStylesheet = resp.request().resourceType() === 'stylesheet';
+      const resourceType = resp.request().resourceType();
+      const isStylesheet = resourceType === 'stylesheet';
       if (isStylesheet) {
         // 处理样式表
         if (allowStylesheetHost.length === 0) {
@@ -75,7 +76,16 @@ export async function ssr({
           stylesheetContents[responseUrl] = await resp.text();
         }
       }
-      RESOURCE_CACHE.set(responseUrl, resp.request().responseForRequest());
+      if (
+        resourceType === 'script' ||
+        resourceType === 'document' ||
+        resourceType === 'stylesheet' ||
+        resourceType === 'media' ||
+        resourceType === 'font' ||
+        resourceType === 'manifest'
+      ) {
+        RESOURCE_CACHE.set(responseUrl, resp.request().responseForRequest());
+      }
     });
     // networkidle0 waits for the network to be idle (no requests for 500ms).
     // The page's JS has likely produced markup by this point, but wait longer
