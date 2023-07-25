@@ -51,10 +51,10 @@ export async function setup({
   const results = result.map((ssrResult) => {
     const { url, html, ttRenderMs } = ssrResult;
     const urlObj = new URL(url);
-    const path = join(PAGE_PATH, urlObj.host, urlObj.pathname);
-    mkdirSync(path, { recursive: true });
     urlObj.searchParams.delete('headless');
-    const filePath = join(path, 'index' + urlObj.search + '.html');
+    const path = join(PAGE_PATH, urlObj.host, urlObj.pathname + urlObj.search);
+    mkdirSync(path, { recursive: true });
+    const filePath = join(path, 'index.html');
     writeFileSync(filePath, html);
     return { path: filePath, ...ssrResult };
   });
