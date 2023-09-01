@@ -1,6 +1,6 @@
 {
   "name": "puppeteer-ssg",
-  "version": "1.0.14",
+  "version": "1.0.13",
   "description": "ssg by puppeteer",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -32,8 +32,5 @@
   },
   "devDependencies": {
     "prettier": "^3.0.0"
-  },
-  "peerDependencies": {
-    "rxjs": "^7.8.1"
   }
 }
